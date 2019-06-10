@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11dff35d7cd1e7f43bb6b811a8ec5ffd, type: 3}
+  m_Name: ArrowRecipie
+  m_EditorClassIdentifier: 
+  requiredType: 0
+  requiredIngredients:
+  - {fileID: 11400000, guid: 0ff2f72195b1d8645b6a3d6b225adf7b, type: 2}
+  - {fileID: 11400000, guid: cabc802732825e241b5cb559199dcf2d, type: 2}
+  indexedIngredientQuantity: 0100000001000000
+  itemProduced: {fileID: 11400000, guid: 5b9d191bac9534a4b8b8808cce8c7881, type: 2}
