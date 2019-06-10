@@ -124,7 +124,10 @@ public class SmoothMouseLook : MonoBehaviour
     {
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb)
+        {
             rb.freezeRotation = true;
+
+        }
         originalRotation = transform.localRotation;
     }
 

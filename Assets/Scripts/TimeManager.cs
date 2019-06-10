@@ -26,7 +26,6 @@ public class TimeManager : MonoBehaviour
     public UnityEvent OnDayEnd;
     public UnityEvent OnHourEnd;
     public OnJumpForwardInTime OnJumpForwardInTime;
-    private VillageManager villageManager;
 
     //86400  seconds in a day
     //3600 seconds in a hour
@@ -41,7 +40,6 @@ public class TimeManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        villageManager = GetComponent<VillageManager>();
     }
 
     public void JumpForwardInTime(int hourToJumpTo)
