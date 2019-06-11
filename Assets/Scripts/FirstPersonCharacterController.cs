@@ -167,7 +167,7 @@ public class FirstPersonCharacterController : MonoBehaviour {
                     MoveDirection = new Vector3(inputX * inputModifyFactor, -AntiBumpFactor, inputY * inputModifyFactor);
                     MoveDirection = Transform.TransformDirection(MoveDirection) * Speed;
                     PlayerControl = true;
-                    Debug.Log("mi");
+
                 
             }
 
