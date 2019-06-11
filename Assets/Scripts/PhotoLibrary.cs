@@ -65,12 +65,10 @@ public class PhotoLibrary : MonoBehaviour {
         switch (navigationDirection)
         {
             case PhotoNavigation.nextPhoto :
-                Debug.Log("next");
                 currentPhotoIndex++;
                 break;
 
             case PhotoNavigation.previousPhoto:
-                Debug.Log("prv");
                 currentPhotoIndex--;
 
                 break;
