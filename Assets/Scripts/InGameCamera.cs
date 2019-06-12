@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class InGameCamera : MonoBehaviour
 {
     public AudioSource spookyStingSource;
-
+    public Image poloroidFrame;
     public float CameraRadius;
     public float CameraRange;
     public LayerMask clueLayerMask;
@@ -18,8 +18,9 @@ public class InGameCamera : MonoBehaviour
     public Slider energyBar;
     public bool isCameraActive;
     private SpriteRenderer currentGhost;
+    public GameObject spotLight;
     public int cameraShots;
-
+    public float flashTime;
     public void Start()
     {
         spookyStingSource = GetComponent<AudioSource>();
@@ -91,24 +92,31 @@ public class InGameCamera : MonoBehaviour
 
     IEnumerator TakePhoto()
     {
+        spotLight.SetActive(true);
         energyBar.gameObject.SetActive(false);
         yield return new WaitForEndOfFrame();
         Time.timeScale = 0.0f;
-        Texture2D photoTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGBAHalf , false);
+        Texture2D photoTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24 , false);
         photoTex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0, false);
         photoTex.Apply();
-        Sprite photoSprite = Sprite.Create(photoTex, new Rect(0, 0, photoTex.width, photoTex.height), new Vector2(0.5f, 0.5f));
+        Sprite photoSprite = Sprite.Create(photoTex, new Rect(poloroidFrame.rectTransform.rect.x, poloroidFrame.rectTransform.rect.y, poloroidFrame.rectTransform.rect.width,  poloroidFrame.rectTransform.rect.height), new Vector2(0.5f, 0.5f));
+        //Sprite photoSprite = Sprite.Create(photoTex, new Rect(0, 0, poloroidFrame.rectTransform.rect.width,  poloroidFrame.rectTransform.rect.height), new Vector2(0.5f, 0.5f));
         photoLibrary.takenPhotoSprites.Add(photoSprite);
         photoTargetObject.GetComponent<Image>().sprite = photoSprite;
+        poloroidFrame.gameObject.SetActive(true);
         yield return new WaitForSecondsRealtime(photoDisplayTime);
         photoTargetObject.GetComponent<Image>().sprite = emptySprite;
         Time.timeScale = 1.0f;
+        poloroidFrame.gameObject.SetActive(false);
         energyBar.gameObject.SetActive(true);
         if (currentGhost != null)
         {
             currentGhost.enabled = false;
             currentGhost = null;
         }
+        yield return new WaitForSeconds(flashTime);
+
+        spotLight.SetActive(false);
 
 
     }
