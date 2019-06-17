@@ -21,12 +21,16 @@ public class InGameCamera : MonoBehaviour
     public GameObject spotLight;
     public int cameraShots;
     public float flashTime;
+    public Canvas canvas;
+    public GameObject blackoutPanel;
+    public bool isFlashOn;
+
     public void Start()
     {
         spookyStingSource = GetComponent<AudioSource>();
         photoLibrary = GetComponent<PhotoLibrary>();
         isCameraActive = true;
-
+        isFlashOn = false;
     }
 
     void Update()
@@ -34,6 +38,17 @@ public class InGameCamera : MonoBehaviour
         if (Input.GetButtonDown("Interact"))
         {
 
+        }
+        if (Input.GetButtonDown("Flash"))
+        {
+            if (isFlashOn)
+            {
+                isFlashOn = false;
+            }
+            else
+            {
+                isFlashOn = true;
+            }
         }
 
         if (Input.GetButtonDown("TakePhoto"))
@@ -92,15 +107,17 @@ public class InGameCamera : MonoBehaviour
 
     IEnumerator TakePhoto()
     {
-        spotLight.SetActive(true);
+        if (isFlashOn)
+        {
+            spotLight.SetActive(true);
+        }
         energyBar.gameObject.SetActive(false);
         yield return new WaitForEndOfFrame();
         Time.timeScale = 0.0f;
-        Texture2D photoTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24 , false);
+        Texture2D photoTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
         photoTex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0, false);
         photoTex.Apply();
-        Sprite photoSprite = Sprite.Create(photoTex, new Rect(poloroidFrame.rectTransform.rect.x, poloroidFrame.rectTransform.rect.y, poloroidFrame.rectTransform.rect.width,  poloroidFrame.rectTransform.rect.height), new Vector2(0.5f, 0.5f));
-        //Sprite photoSprite = Sprite.Create(photoTex, new Rect(0, 0, poloroidFrame.rectTransform.rect.width,  poloroidFrame.rectTransform.rect.height), new Vector2(0.5f, 0.5f));
+        Sprite photoSprite = Sprite.Create(photoTex, new Rect(0, 0, photoTex.width, photoTex.height), new Vector2(0.5f, 0.5f));
         photoLibrary.takenPhotoSprites.Add(photoSprite);
         photoTargetObject.GetComponent<Image>().sprite = photoSprite;
         poloroidFrame.gameObject.SetActive(true);
@@ -115,9 +132,8 @@ public class InGameCamera : MonoBehaviour
             currentGhost = null;
         }
         yield return new WaitForSeconds(flashTime);
-
         spotLight.SetActive(false);
-
+    
 
     }
 }

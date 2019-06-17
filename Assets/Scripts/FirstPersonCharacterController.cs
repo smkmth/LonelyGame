@@ -36,9 +36,7 @@ public class FirstPersonCharacterController : MonoBehaviour {
     [SerializeField]
     private bool SlideWhenOverSlopeLimit = false;
 
-    [Tooltip("If checked and the player is on an object tagged \"Slide\", he will slide down it regardless of the slope limit.")]
-    [SerializeField]
-    private bool SlideOnTaggedObjects = false;
+
 
     [Tooltip("How fast the player slides when on slopes as defined above.")]
     [SerializeField]
@@ -50,7 +48,7 @@ public class FirstPersonCharacterController : MonoBehaviour {
 
     [Tooltip("Small amounts of this results in bumping when walking down slopes, but large amounts results in falling too fast.")]
     [SerializeField]
-    private float AntiBumpFactor = .75f;
+    private float AntiBumpFactor;
 
     [Tooltip("Player must be grounded for at least this many physics frames before being able to jump again; set to 0 to allow bunny hopping.")]
     [SerializeField]
@@ -88,8 +86,6 @@ public class FirstPersonCharacterController : MonoBehaviour {
 
     private void Update()
     {
-        // If the run button is set to toggle, then switch between walk/run speed. (We use Update for this...
-        // FixedUpdate is a poor place to use GetButtonDown, since it doesn't necessarily run every frame and can miss the event)
         if (ToggleRun && Grounded && Input.GetButtonDown("Run"))
         {
             Speed = (Speed == WalkSpeed ? RunSpeed : WalkSpeed);
@@ -102,21 +98,21 @@ public class FirstPersonCharacterController : MonoBehaviour {
         float inputX = Input.GetAxis("Horizontal");
         float inputY = Input.GetAxis("Vertical");
 
-        // If both horizontal and vertical are used simultaneously, limit speed (if allowed), so the total doesn't exceed normal move speed
         float inputModifyFactor = (inputX != 0.0f && inputY != 0.0f && LimitDiagonalSpeed) ? .7071f : 1.0f;
+
+
         if (inputX == 0.0f && inputY == 0.0f) {
             AntiBumpFactor = 0.0f;
         }
         else
         {
-            AntiBumpFactor = .75f;
+            AntiBumpFactor = .4f;
         }
 
         if (Grounded)
         {
             bool sliding = false;
-            // See if surface immediately below should be slid down. We use this normally rather than a ControllerColliderHit point,
-            // because that interferes with step climbing amongst other annoyances
+
             if (Physics.Raycast(Transform.position, -Vector3.up, out Hit, RayDistance))
             {
                 if (Vector3.Angle(Hit.normal, Vector3.up) > SlideLimit)
@@ -135,7 +131,6 @@ public class FirstPersonCharacterController : MonoBehaviour {
                 }
             }
 
-            // If we were falling, and we fell a vertical distance greater than the threshold, run a falling damage routine
             if (Falling)
             {
                 Falling = false;
@@ -145,14 +140,12 @@ public class FirstPersonCharacterController : MonoBehaviour {
                 }
             }
 
-            // If running isn't on a toggle, then use the appropriate speed depending on whether the run button is down
             if (!ToggleRun)
             {
                 Speed = Input.GetKey(KeyCode.LeftShift) ? RunSpeed : WalkSpeed;
             }
 
-            // If sliding (and it's allowed), or if we're on an object tagged "Slide", get a vector pointing down the slope we're on
-            if ((sliding && SlideWhenOverSlopeLimit) || (SlideOnTaggedObjects && Hit.collider.tag == "Slide"))
+            if ((sliding && SlideWhenOverSlopeLimit))
             {
                 Vector3 hitNormal = Hit.normal;
                 MoveDirection = new Vector3(hitNormal.x, -hitNormal.y, hitNormal.z);
@@ -161,17 +154,16 @@ public class FirstPersonCharacterController : MonoBehaviour {
                 PlayerControl = false;
                 Debug.Log("sliding");
             }
-            // Otherwise recalculate moveDirection directly from axes, adding a bit of -y to avoid bumping down inclines
             else
             {
-                    MoveDirection = new Vector3(inputX * inputModifyFactor, -AntiBumpFactor, inputY * inputModifyFactor);
+                    
+                    MoveDirection = new Vector3(inputX , -AntiBumpFactor, inputY );
                     MoveDirection = Transform.TransformDirection(MoveDirection) * Speed;
                     PlayerControl = true;
 
                 
             }
 
-            // Jump! But only if the jump button has been released and player has been grounded for a given number of frames
             if (!Input.GetButton("Jump"))
             {
                 JumpTimer++;
@@ -184,14 +176,12 @@ public class FirstPersonCharacterController : MonoBehaviour {
         }
         else
         {
-            // If we stepped over a cliff or something, set the height at which we started falling
             if (!Falling)
             {
                 Falling = true;
                 FallStartLevel = Transform.position.y;
             }
 
-            // If air control is allowed, check movement but don't touch the y component
             if (AirControl && PlayerControl)
             {
                 MoveDirection.x = inputX * Speed * inputModifyFactor;
@@ -208,15 +198,13 @@ public class FirstPersonCharacterController : MonoBehaviour {
     }
 
 
-    // Store point that we're in contact with for use in FixedUpdate if needed
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         ContactPoint = hit.point;
     }
 
 
-    // This is the place to apply things like fall damage. You can give the player hitpoints and remove some
-    // of them based on the distance fallen, play sound effects, etc.
+
     private void OnFell(float fallDistance)
     {
         print("Ouch! Fell " + fallDistance + " units!");

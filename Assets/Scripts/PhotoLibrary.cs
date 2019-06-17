@@ -19,6 +19,8 @@ public class PhotoLibrary : MonoBehaviour {
     public bool isLibraryActive;
     public Sprite noPhotoSprite;
     public GameObject polaroidFrame;
+    public GameObject blackoutPanel;
+    
 
     // Use this for initialization
     void Start () {
@@ -45,6 +47,8 @@ public class PhotoLibrary : MonoBehaviour {
             isLibraryActive = true;
             Cursor.lockState = CursorLockMode.None;
             polaroidFrame.SetActive(true);
+            previousPhotoButton.gameObject.SetActive(true);
+            nextPhotoButton.gameObject.SetActive(true);
 
         }
         else
@@ -53,6 +57,10 @@ public class PhotoLibrary : MonoBehaviour {
             isLibraryActive = false;
             Cursor.lockState = CursorLockMode.Locked;
             polaroidFrame.SetActive(false);
+
+            previousPhotoButton.gameObject.SetActive(false);
+            nextPhotoButton.gameObject.SetActive(false);
+
 
 
         }
