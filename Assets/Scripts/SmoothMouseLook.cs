@@ -12,22 +12,26 @@ public class SmoothMouseLook : MonoBehaviour
     private float yRotation;
     public float smoothing;
     float xRotation;
+    public bool cameraControl =true;
 
     public void LateUpdate()
     {
-        float HorizontalAxis = Input.GetAxis("Mouse X");
-        float VerticalAxis = Input.GetAxis("Mouse Y");
-
-        //float xRotation = transform.localEulerAngles.y + HorizontalAxis * sensitivityX;
-        xRotation += HorizontalAxis * sensitivityX * Time.deltaTime;
-
-        yRotation += VerticalAxis * sensitivityY* Time.deltaTime;
-        yRotation = Mathf.Clamp(yRotation, minimumY, maximumY);
-
-        quatRot = Quaternion.Euler(new Vector3(-yRotation, xRotation, 0));
-        if (transform.rotation != quatRot)
+        if (cameraControl)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, quatRot, Time.deltaTime * smoothing);
+            float HorizontalAxis = Input.GetAxis("Mouse X");
+            float VerticalAxis = Input.GetAxis("Mouse Y");
+
+            //float xRotation = transform.localEulerAngles.y + HorizontalAxis * sensitivityX;
+            xRotation += HorizontalAxis * sensitivityX * Time.deltaTime;
+
+            yRotation += VerticalAxis * sensitivityY * Time.deltaTime;
+            yRotation = Mathf.Clamp(yRotation, minimumY, maximumY);
+
+            quatRot = Quaternion.Euler(new Vector3(-yRotation, xRotation, 0));
+            if (transform.rotation != quatRot)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, quatRot, Time.deltaTime * smoothing);
+            }
         }
     }
 
