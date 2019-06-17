@@ -35,7 +35,7 @@ public class PickUpItem : MonoBehaviour {
 
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
-                if (Physics.Raycast(transform.position, transform.forward, out hit, pickUpRange, interactLayer))
+                if (Physics.Raycast(transform.position,transform.forward, out hit, pickUpRange, interactLayer))
                 {
                     Debug.Log("Hit");
                     hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
