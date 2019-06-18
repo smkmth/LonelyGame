@@ -6,6 +6,7 @@ using TMPro;
 public class PickUpItem : MonoBehaviour {
 
     public LayerMask interactLayer;
+    public LayerMask wallLayer;
     public LayerMask playerLayer;
     private Transform heldObject = null;
     public Item heldItemData;
@@ -26,6 +27,8 @@ public class PickUpItem : MonoBehaviour {
     public float putBackDistance;
     public bool canPutBack;
     public TextMeshProUGUI itemPrompt;
+    public bool objectBehindWall;
+    public float distanceToHeldObject;
 
     // Use this for initialization
     void Start () {
@@ -33,6 +36,33 @@ public class PickUpItem : MonoBehaviour {
         itemPrompt.text = "";
     }
 
+
+    public void PickUp()
+    {
+        itemPrompt.text = "";
+        heldObject.GetComponent<Rigidbody>().isKinematic = true;
+        distanceToHeldObject = Vector3.Distance(transform.position, heldObject.position);
+        heldItemData = heldObject.GetComponent<Item>();
+        heldObject.GetComponent<Collider>().isTrigger = true;
+        heldObject.position = itemHeldTarget.position;
+        heldObject.rotation = itemHeldTarget.rotation;
+        heldObject.parent = itemHeldTarget;
+        heldObject.gameObject.layer = LayerMask.NameToLayer("NOCLEAR");
+        holdingObject = true;
+
+    }
+    public void PutDown()
+    {
+        heldObject.gameObject.layer = LayerMask.NameToLayer("Draggable");
+        heldObject.parent = null;
+        heldObject.GetComponent<Collider>().isTrigger = false;
+        heldItemData = null;
+        canPutBack = false;
+        heldObject = null;
+        holdingObject = false;
+        itemPrompt.text = "";
+
+    }
     // Update is called once per frame
     void Update()
     {
@@ -48,8 +78,8 @@ public class PickUpItem : MonoBehaviour {
             {
                 if (hit.collider.tag == "Item")
                 {
+                    Debug.Log(hit.collider.name);
                     Vector3 angle = (hit.transform.position - Camera.main.transform.position).normalized;
-                    //Debug.DrawRay(Camera.main.transform.position, angle * 1000000.0f, Color.red, 1000000000.0f);
                     RaycastHit testRay;
                     if (Physics.Raycast(Camera.main.transform.position, angle.normalized, out testRay, 1000.0f))
                     {
@@ -58,24 +88,15 @@ public class PickUpItem : MonoBehaviour {
                             float angleTo = Vector3.Angle(angle, Camera.main.transform.forward);
                             if (Mathf.Abs(angleTo) < maxAngle)
                             {
-                                itemPrompt.gameObject.SetActive(true);
                                 itemPrompt.text = "Pick up " + hit.collider.gameObject.GetComponent<Item>().itemname;
 
                                 if (Input.GetButtonDown("Interact"))
                                 {
-                                    itemPrompt.text = "";
-                                    hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                                     heldObject = hit.collider.gameObject.transform;
-                                    heldItemData = heldObject.GetComponent<Item>();
-                                    heldObject.GetComponent<Collider>().isTrigger = true;
-                                    heldObject.position = itemHeldTarget.position;
-                                    heldObject.rotation = itemHeldTarget.rotation;
-                                    heldObject.parent = itemHeldTarget;
-                                    heldObject.gameObject.layer = LayerMask.NameToLayer("NOCLEAR");
-                                    holdingObject = true;
-                                    return;
+                                    PickUp();
 
                                 }
+                                return;
                             }
                         }
                     }
@@ -109,6 +130,16 @@ public class PickUpItem : MonoBehaviour {
                 itemPrompt.gameObject.SetActive(false);
 
             }
+            if (Physics.Raycast(transform.position, (heldObject.position - transform.position), out hit, distanceToHeldObject, wallLayer))
+            {
+                objectBehindWall = true;
+
+            }
+            else
+            {
+
+                objectBehindWall = false;
+            }
         }
         if (holdTimer <= 0)
         {
@@ -135,32 +166,31 @@ public class PickUpItem : MonoBehaviour {
 
             if (Input.GetButtonDown("Interact") && holdingObject)
             {
-             
-
                 holdTimer = holdDelay;
-                heldObject.gameObject.layer = LayerMask.NameToLayer("Draggable");
-                heldObject.parent = null;
 
-                heldObject.GetComponent<Collider>().isTrigger = false;
                 if (canPutBack)
                 {
                     heldObject.transform.position = heldItemData.originalLocation;
                     heldObject.transform.rotation = heldItemData.originalRotation;
-
+                    PutDown();
+                    return;
                 }
                 else
                 {
-                    heldObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
-                    heldObject.gameObject.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * throwForce, ForceMode.Impulse);
+
+                    if (objectBehindWall)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        heldObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+                        heldObject.gameObject.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * throwForce, ForceMode.Impulse);
+                        PutDown();
+                    }
+
                 }
-                heldItemData = null;
-                canPutBack = false;
-                heldObject = null;
-                holdingObject = false;
-                itemPrompt.text = "";
-
-                return; 
-
+  
             }
         }
         else
