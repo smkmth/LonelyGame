@@ -18,6 +18,10 @@ ModelImporter:
     100024: Door_05
     100026: Door_06
     100028: Walls1
+    100030: Ceiling1
+    100032: Ceiling2
+    100034: Door_07
+    100036: Map
     400000: pPlane1
     400002: pPlane2
     400004: pPlane3
@@ -33,6 +37,10 @@ ModelImporter:
     400024: Door_05
     400026: Door_06
     400028: Walls1
+    400030: Ceiling1
+    400032: Ceiling2
+    400034: Door_07
+    400036: Map
     2100000: lambert1
     2100002: M_Floor_01
     2100004: M_Door_01
@@ -40,6 +48,7 @@ ModelImporter:
     2100008: M_Wallpaper_01
     2100010: M_Wood_01
     2100012: M_WIndow_01
+    2100014: M_Ceiling_01
     2300000: pPlane3
     2300002: Floor
     2300004: Walls
@@ -50,6 +59,10 @@ ModelImporter:
     2300014: Door_05
     2300016: Door_06
     2300018: Walls1
+    2300020: Ceiling1
+    2300022: Ceiling2
+    2300024: Door_07
+    2300026: Map
     3300000: pPlane3
     3300002: Floor
     3300004: Walls
@@ -60,6 +73,10 @@ ModelImporter:
     3300014: Door_05
     3300016: Door_06
     3300018: Walls1
+    3300020: Ceiling1
+    3300022: Ceiling2
+    3300024: Door_07
+    3300026: Map
     4300000: pPlane3
     4300002: Floor
     4300004: Walls
@@ -70,6 +87,10 @@ ModelImporter:
     4300014: Door_05
     4300016: Door_06
     4300018: Walls1
+    4300020: Door_07
+    4300022: Ceiling1
+    4300024: Ceiling2
+    4300026: Map
   externalObjects: {}
   materials:
     importMaterials: 1
