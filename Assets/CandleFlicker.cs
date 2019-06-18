@@ -42,11 +42,11 @@ public class CandleFlicker : MonoBehaviour {
             {
                 initial = true;
                 timeToMove = Random.Range(0.3f, 5.0f);
-                randomLow = Random.Range(0.5f, 0.7f);
-                randomHigh = Random.Range(.7f, 0.85f);
+                randomLow = Random.Range(1.5f, 1.7f);
+                randomHigh = Random.Range(1.7f, 1.85f);
 
             }
-            candleLight.intensity = .7f;
+            candleLight.intensity = 1.7f;
             currentTime = 0f;
         }
 
