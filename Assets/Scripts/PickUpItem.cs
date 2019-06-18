@@ -25,41 +25,45 @@ public class PickUpItem : MonoBehaviour {
     public float maxAngle;
     public float putBackDistance;
     public bool canPutBack;
-    public TextMeshProUGUI putBackPrompt;
+    public TextMeshProUGUI itemPrompt;
 
     // Use this for initialization
     void Start () {
         holdTimer = holdDelay;
-        putBackPrompt.gameObject.SetActive(false);
+        itemPrompt.text = "";
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (holdTimer <= 0)
+
+        if (!holdingObject)
         {
+            holdTimer = holdDelay;
 
-            if (Input.GetButtonDown("Interact") && !holdingObject)
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits = Physics.SphereCastAll(ray, pickUpRadius, pickUpRange);
+            foreach (RaycastHit hit in hits)
             {
-                holdTimer = holdDelay;
-
-
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit[] hits = Physics.SphereCastAll(ray, pickUpRadius, pickUpRange);
-                foreach (RaycastHit hit in hits)
+                if (hit.collider.tag == "Item")
                 {
-                    if (hit.collider.tag == "Item")
+                    Vector3 angle = (hit.transform.position - Camera.main.transform.position).normalized;
+                    //Debug.DrawRay(Camera.main.transform.position, angle * 1000000.0f, Color.red, 1000000000.0f);
+                    RaycastHit testRay;
+                    if (Physics.Raycast(Camera.main.transform.position, angle.normalized, out testRay, 1000.0f))
                     {
-                        Vector3 angle = (hit.transform.position - Camera.main.transform.position).normalized;
-                        Debug.DrawRay(Camera.main.transform.position, angle * 1000000.0f, Color.red ,1000000000.0f);
-                        RaycastHit testRay;
-                        if (Physics.Raycast(Camera.main.transform.position, angle.normalized, out testRay, 1000.0f))
+                        if (testRay.collider.tag == "Item")
                         {
-                            if (testRay.collider.tag == "Item")
+                            float angleTo = Vector3.Angle(angle, Camera.main.transform.forward);
+                            if (Mathf.Abs(angleTo) < maxAngle)
                             {
-                                float angleTo = Vector3.Angle(angle, Camera.main.transform.forward);
-                                if (Mathf.Abs(angleTo) < maxAngle)
+                                itemPrompt.gameObject.SetActive(true);
+                                itemPrompt.text = "Pick up " + hit.collider.gameObject.GetComponent<Item>().itemname;
+
+                                if (Input.GetButtonDown("Interact"))
                                 {
+                                    itemPrompt.text = "";
                                     hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                                     heldObject = hit.collider.gameObject.transform;
                                     heldItemData = heldObject.GetComponent<Item>();
@@ -70,33 +74,44 @@ public class PickUpItem : MonoBehaviour {
                                     heldObject.gameObject.layer = LayerMask.NameToLayer("NOCLEAR");
                                     holdingObject = true;
                                     return;
+
                                 }
                             }
                         }
                     }
                 }
-            }
-            if (holdingObject)
-            {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                RaycastHit hit;
-                Physics.SphereCast(ray, 1.0f, out hit, putBackDistance);
-                if (Mathf.Abs(Vector3.Distance(hit.point, heldItemData.originalLocation)) < putBackDistance)
-                {
-                    canPutBack = true;
-                    putBackPrompt.gameObject.SetActive(true);
-
-
-                }
                 else
                 {
-
-                    canPutBack = false;
-                    putBackPrompt.gameObject.SetActive(false);
+                    itemPrompt.text = "";
 
                 }
             }
+        }
+
+        if (holdingObject)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            RaycastHit hit;
+            Physics.SphereCast(ray, 1.0f, out hit, putBackDistance);
+            if (Mathf.Abs(Vector3.Distance(hit.point, heldItemData.originalLocation)) < putBackDistance)
+            {
+                canPutBack = true;
+                itemPrompt.gameObject.SetActive(true);
+                itemPrompt.text = "Put back " + heldItemData.itemname;
+
+
+            }
+            else
+            {
+
+                canPutBack = false;
+                itemPrompt.gameObject.SetActive(false);
+
+            }
+        }
+        if (holdTimer <= 0)
+        {
             if (Input.GetMouseButtonDown(1) && holdingObject)
             {
                 heldObject.transform.position = inspectItemTarget.position;
@@ -142,7 +157,7 @@ public class PickUpItem : MonoBehaviour {
                 canPutBack = false;
                 heldObject = null;
                 holdingObject = false;
-                putBackPrompt.gameObject.SetActive(false);
+                itemPrompt.text = "";
 
                 return; 
 
