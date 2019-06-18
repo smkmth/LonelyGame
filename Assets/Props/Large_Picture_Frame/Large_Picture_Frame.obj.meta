@@ -3,14 +3,14 @@ guid: c3c72f8ef760c0840bdf07c65aea10a2
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: //RootNode
-    100002: Lowpoly6
-    400000: //RootNode
-    400002: Lowpoly6
-    2100000: Lowpoly6Mat
-    2300000: Lowpoly6
-    3300000: Lowpoly6
-    4300000: Lowpoly6
+    100000: Large_Picture_Frame
+    100002: //RootNode
+    400000: Large_Picture_Frame
+    400002: //RootNode
+    2100000: Large_Picture_FrameMat
+    2300000: Large_Picture_Frame
+    3300000: Large_Picture_Frame
+    4300000: Large_Picture_Frame
   externalObjects: {}
   materials:
     importMaterials: 1
