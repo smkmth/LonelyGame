@@ -1,16 +1,14 @@
 fileFormatVersion: 2
-guid: 05131a17446d45c47a42d22d0eff8fa5
+guid: 6558ad814e7108048a221465af1ba09e
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
-    100002: candle
     400000: //RootNode
-    400002: candle
-    2100000: candleMat
-    2300000: candle
-    3300000: candle
-    4300000: candle
+    2100000: lambert1
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: Large_Picture_Frame
   externalObjects: {}
   materials:
     importMaterials: 1
