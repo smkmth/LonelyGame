@@ -11,6 +11,13 @@ ModelImporter:
     100010: transform2
     100012: Floor
     100014: Walls
+    100016: Ceiling
+    100018: Door_02
+    100020: Door_03
+    100022: Door_04
+    100024: Door_05
+    100026: Door_06
+    100028: Walls1
     400000: pPlane1
     400002: pPlane2
     400004: pPlane3
@@ -19,16 +26,50 @@ ModelImporter:
     400010: transform2
     400012: Floor
     400014: Walls
+    400016: Ceiling
+    400018: Door_02
+    400020: Door_03
+    400022: Door_04
+    400024: Door_05
+    400026: Door_06
+    400028: Walls1
     2100000: lambert1
+    2100002: M_Floor_01
+    2100004: M_Door_01
+    2100006: MentalPillar_M_Wood_01
+    2100008: M_Wallpaper_01
+    2100010: M_Wood_01
+    2100012: M_WIndow_01
     2300000: pPlane3
     2300002: Floor
     2300004: Walls
+    2300006: Ceiling
+    2300008: Door_02
+    2300010: Door_03
+    2300012: Door_04
+    2300014: Door_05
+    2300016: Door_06
+    2300018: Walls1
     3300000: pPlane3
     3300002: Floor
     3300004: Walls
+    3300006: Ceiling
+    3300008: Door_02
+    3300010: Door_03
+    3300012: Door_04
+    3300014: Door_05
+    3300016: Door_06
+    3300018: Walls1
     4300000: pPlane3
     4300002: Floor
     4300004: Walls
+    4300006: Ceiling
+    4300008: Door_02
+    4300010: Door_03
+    4300012: Door_04
+    4300014: Door_05
+    4300016: Door_06
+    4300018: Walls1
   externalObjects: {}
   materials:
     importMaterials: 1
