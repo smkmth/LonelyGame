@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PickUpItem : MonoBehaviour {
 
     public LayerMask interactLayer;
     public LayerMask playerLayer;
     private Transform heldObject = null;
-    private Vector3 heldObjectPos;
+    public Item heldItemData;
     float dist;
     Rigidbody rb = null;
     //public float pushForce;
@@ -22,11 +23,14 @@ public class PickUpItem : MonoBehaviour {
     public float speed;
     public SmoothMouseLook smoothMouseLook;
     public float maxAngle;
+    public float putBackDistance;
+    public bool canPutBack;
+    public TextMeshProUGUI putBackPrompt;
 
     // Use this for initialization
     void Start () {
         holdTimer = holdDelay;
-
+        putBackPrompt.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -52,33 +56,47 @@ public class PickUpItem : MonoBehaviour {
                         if (Physics.Raycast(Camera.main.transform.position, angle.normalized, out testRay, 1000.0f))
                         {
                             if (testRay.collider.tag == "Item")
-                            { 
+                            {
                                 float angleTo = Vector3.Angle(angle, Camera.main.transform.forward);
-                                if(Mathf.Abs(angleTo) < maxAngle)
+                                if (Mathf.Abs(angleTo) < maxAngle)
                                 {
-                                    heldObjectPos = hit.collider.transform.position;
                                     hit.collider.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                                     heldObject = hit.collider.gameObject.transform;
+                                    heldItemData = heldObject.GetComponent<Item>();
                                     heldObject.GetComponent<Collider>().isTrigger = true;
                                     heldObject.position = itemHeldTarget.position;
                                     heldObject.rotation = itemHeldTarget.rotation;
                                     heldObject.parent = itemHeldTarget;
+                                    heldObject.gameObject.layer = LayerMask.NameToLayer("NOCLEAR");
                                     holdingObject = true;
                                     return;
                                 }
-
                             }
-
                         }
-                  
-
                     }
-                    
+                }
+            }
+            if (holdingObject)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                RaycastHit hit;
+                Physics.SphereCast(ray, 1.0f, out hit, putBackDistance);
+                if (Mathf.Abs(Vector3.Distance(hit.point, heldItemData.originalLocation)) < putBackDistance)
+                {
+                    canPutBack = true;
+                    putBackPrompt.gameObject.SetActive(true);
 
 
                 }
-            }
+                else
+                {
 
+                    canPutBack = false;
+                    putBackPrompt.gameObject.SetActive(false);
+
+                }
+            }
             if (Input.GetMouseButtonDown(1) && holdingObject)
             {
                 heldObject.transform.position = inspectItemTarget.position;
@@ -88,32 +106,13 @@ public class PickUpItem : MonoBehaviour {
 
             if (Input.GetMouseButton(1) && holdingObject)
             {
-
                 smoothMouseLook.cameraControl = false;
+                heldObject.transform.Rotate(heldObject.up,Input.GetAxis("Mouse X"),Space.World);
 
-                    heldObject.transform.Rotate(heldObject.right,Input.GetAxis("Mouse Y"),Space.World);
-
-           
-                    heldObject.transform.Rotate(heldObject.up,Input.GetAxis("Mouse X"),Space.World);
-                
-                /*
-              //  heldObject.transform.Rotate(new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0) * Time.deltaTime * speed , Space.Self);
-                if (Input.GetAxisRaw("Mouse Y") == 0 && Input.GetAxisRaw("Mouse X") == 0)
-                {
-                    Vector3 rotVector = heldObject.transform.eulerAngles;
-                    rotVector.x = Mathf.Round(rotVector.x / 45) * 45;
-                    rotVector.y = Mathf.Round(rotVector.y / 45) * 45;
-                    rotVector.z = Mathf.Round(rotVector.z / 45) * 45;
-       
-                    heldObject.eulerAngles = rotVector;
-
-                }
-                */
             }
             if (!Input.GetMouseButton(1) && holdingObject)
             {
                 smoothMouseLook.cameraControl = true;
-
                 heldObject.position = itemHeldTarget.position;
                 heldObject.localRotation = itemHeldTarget.localRotation;
 
@@ -121,14 +120,30 @@ public class PickUpItem : MonoBehaviour {
 
             if (Input.GetButtonDown("Interact") && holdingObject)
             {
-                holdTimer = holdDelay;
+             
 
+                holdTimer = holdDelay;
+                heldObject.gameObject.layer = LayerMask.NameToLayer("Draggable");
                 heldObject.parent = null;
+
                 heldObject.GetComponent<Collider>().isTrigger = false;
-                heldObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
-                heldObject.gameObject.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * throwForce, ForceMode.Impulse);
+                if (canPutBack)
+                {
+                    heldObject.transform.position = heldItemData.originalLocation;
+                    heldObject.transform.rotation = heldItemData.originalRotation;
+
+                }
+                else
+                {
+                    heldObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+                    heldObject.gameObject.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * throwForce, ForceMode.Impulse);
+                }
+                heldItemData = null;
+                canPutBack = false;
                 heldObject = null;
                 holdingObject = false;
+                putBackPrompt.gameObject.SetActive(false);
+
                 return; 
 
             }
