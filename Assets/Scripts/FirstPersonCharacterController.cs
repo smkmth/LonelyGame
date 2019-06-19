@@ -25,18 +25,19 @@ public class FirstPersonCharacterController : MonoBehaviour
     {
         int index = Random.Range(0, footsteps.Length);
         AudioClip footstep = footsteps[index];
-        if (footsteptimer >= footstepTime)
+        if (walking)
         {
-            if (walking)
+            if (footsteptimer >= footstepTime)
             {
-                audioSource.clip = footstep;
-                audioSource.PlayOneShot(footstep, 0.5f);
-                footsteptimer = 0;
+                    audioSource.clip = footstep;
+                    audioSource.PlayOneShot(footstep, 0.5f);
+                    footsteptimer = 0;
             }
-        }
-        else
-        {
-            footsteptimer += Time.deltaTime;
+            else
+            {
+                footsteptimer += Time.deltaTime;
+            }
+
         }
 
     }

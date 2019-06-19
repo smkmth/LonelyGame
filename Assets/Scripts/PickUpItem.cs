@@ -2,38 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+public enum HoldState
+{
+    notHoldingItem,
+    delay,
+    holdingItem,
+    putItemBack,
+    itemBehindWall
 
+}
 public class PickUpItem : MonoBehaviour {
 
-    public LayerMask interactLayer;
+    public SmoothMouseLook smoothMouseLook;
+    public TextMeshProUGUI itemPrompt;
+
     public LayerMask wallLayer;
-    public LayerMask playerLayer;
     private Transform heldObject = null;
     public Item heldItemData;
-    float dist;
-    Rigidbody rb = null;
-    //public float pushForce;
     public float pickUpRange;
     public float pickUpRadius;
     public Transform itemHeldTarget;
     public Transform inspectItemTarget;
-    public bool holdingObject;
     public float throwForce;
     public float holdDelay;
     public float holdTimer;
-    public float speed;
-    public SmoothMouseLook smoothMouseLook;
-    public float maxAngle;
+    public float maxInteractAngle;
     public float putBackDistance;
-    public bool canPutBack;
-    public TextMeshProUGUI itemPrompt;
-    public bool objectBehindWall;
     public float distanceToHeldObject;
+
+    public bool canPutBack;
+    public bool holdingObject = false;
+    public bool objectBehindWall;
+
+    public HoldState currentHoldState;
 
     // Use this for initialization
     void Start () {
         holdTimer = holdDelay;
+        itemPrompt.gameObject.SetActive(true);
         itemPrompt.text = "";
+        currentHoldState = HoldState.notHoldingItem;
     }
 
 
@@ -49,11 +57,13 @@ public class PickUpItem : MonoBehaviour {
         heldObject.parent = itemHeldTarget;
         heldObject.gameObject.layer = LayerMask.NameToLayer("NOCLEAR");
         holdingObject = true;
+        currentHoldState = HoldState.delay;
+;
 
     }
     public void PutDown()
     {
-        heldObject.gameObject.layer = LayerMask.NameToLayer("Draggable");
+        heldObject.gameObject.layer = LayerMask.NameToLayer("Item");
         heldObject.parent = null;
         heldObject.GetComponent<Collider>().isTrigger = false;
         heldItemData = null;
@@ -61,124 +71,123 @@ public class PickUpItem : MonoBehaviour {
         heldObject = null;
         holdingObject = false;
         itemPrompt.text = "";
+        currentHoldState = HoldState.notHoldingItem;
+
 
     }
+    public bool CanPutItemBack()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        RaycastHit hit;
+        Physics.SphereCast(ray, 1.0f, out hit, putBackDistance);
+        if (Mathf.Abs(Vector3.Distance(hit.point, heldItemData.originalLocation)) < putBackDistance)
+        {
+            itemPrompt.text = "Put back " + heldItemData.itemname;
+            return true;
+        }
+        else
+        {
+            itemPrompt.text = "";
+            return false;
+
+        }
+
+    }
+
+    public bool IsItemBehindWall()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, (heldObject.position - transform.position), out hit, distanceToHeldObject, wallLayer))
+        {
+            return true;
+
+        }
+        else
+        {
+
+            return false;
+        }
+    }
+    public GameObject DetectObject(string tagToDetect)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] hits = Physics.SphereCastAll(ray, pickUpRadius, pickUpRange);
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider.tag == tagToDetect)
+            {
+                Vector3 angle = (hit.point- Camera.main.transform.position).normalized;
+                RaycastHit testRay;
+                if (Physics.Raycast(Camera.main.transform.position, angle.normalized, out testRay, 1000.0f))
+                {
+                    if (hit.collider.tag == tagToDetect)
+                    {
+                        float angleTo = Vector3.Angle(angle, Camera.main.transform.forward);
+                        if (Mathf.Abs(angleTo) < maxInteractAngle)
+                        {
+                            return hit.collider.gameObject;
+                        }
+                    }
+                }
+            }
+            
+
+        }
+        return null;
+    }
+
     // Update is called once per frame
     void Update()
     {
 
-        if (!holdingObject)
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 10000.0f))
         {
-            holdTimer = holdDelay;
-
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit[] hits = Physics.SphereCastAll(ray, pickUpRadius, pickUpRange);
-            foreach (RaycastHit hit in hits)
+            if (hit.collider.tag == "Interact")
             {
-                if (hit.collider.tag == "Item")
+                itemPrompt.text = "Interact with " + hit.collider.gameObject.name; 
+                if (Input.GetButtonDown("Interact"))
                 {
-                    Debug.Log(hit.collider.name);
-                    Vector3 angle = (hit.transform.position - Camera.main.transform.position).normalized;
-                    RaycastHit testRay;
-                    if (Physics.Raycast(Camera.main.transform.position, angle.normalized, out testRay, 1000.0f))
+                    hit.collider.gameObject.GetComponent<GameEventTrigger>().TriggerEvent();
+
+                }
+                return;
+            }
+
+        }
+
+
+
+        switch (currentHoldState)
+        {
+            case HoldState.notHoldingItem:
+                GameObject obj = DetectObject("Pickup");
+                if (obj)
+                {
+                    itemPrompt.text = "Pick up " + obj.GetComponent<Item>().itemname;
+                    if (Input.GetButtonDown("Interact"))
                     {
-                        if (testRay.collider.tag == "Item")
-                        {
-                            float angleTo = Vector3.Angle(angle, Camera.main.transform.forward);
-                            if (Mathf.Abs(angleTo) < maxAngle)
-                            {
-                                itemPrompt.text = "Pick up " + hit.collider.gameObject.GetComponent<Item>().itemname;
-
-                                if (Input.GetButtonDown("Interact"))
-                                {
-                                    heldObject = hit.collider.gameObject.transform;
-                                    PickUp();
-
-                                }
-                                return;
-                            }
-                        }
+                        heldObject = obj.transform;
+                        PickUp();
                     }
+
                 }
                 else
                 {
                     itemPrompt.text = "";
-
                 }
-            }
-        }
-
-        if (holdingObject)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            RaycastHit hit;
-            Physics.SphereCast(ray, 1.0f, out hit, putBackDistance);
-            if (Mathf.Abs(Vector3.Distance(hit.point, heldItemData.originalLocation)) < putBackDistance)
-            {
-                canPutBack = true;
-                itemPrompt.gameObject.SetActive(true);
-                itemPrompt.text = "Put back " + heldItemData.itemname;
-
-
-            }
-            else
-            {
-
-                canPutBack = false;
-                itemPrompt.gameObject.SetActive(false);
-
-            }
-            if (Physics.Raycast(transform.position, (heldObject.position - transform.position), out hit, distanceToHeldObject, wallLayer))
-            {
-                objectBehindWall = true;
-
-            }
-            else
-            {
-
-                objectBehindWall = false;
-            }
-        }
-        if (holdTimer <= 0)
-        {
-            if (Input.GetMouseButtonDown(1) && holdingObject)
-            {
-                heldObject.transform.position = inspectItemTarget.position;
-                heldObject.transform.rotation = inspectItemTarget.rotation;
-
-            }
-
-            if (Input.GetMouseButton(1) && holdingObject)
-            {
-                smoothMouseLook.cameraControl = false;
-                heldObject.transform.Rotate(heldObject.up,Input.GetAxis("Mouse X"),Space.World);
-
-            }
-            if (!Input.GetMouseButton(1) && holdingObject)
-            {
-                smoothMouseLook.cameraControl = true;
-                heldObject.position = itemHeldTarget.position;
-                heldObject.localRotation = itemHeldTarget.localRotation;
-
-            }
-
-            if (Input.GetButtonDown("Interact") && holdingObject)
-            {
-                holdTimer = holdDelay;
-
-                if (canPutBack)
+                break;
+            case HoldState.holdingItem:
+                if (CanPutItemBack())
                 {
-                    heldObject.transform.position = heldItemData.originalLocation;
-                    heldObject.transform.rotation = heldItemData.originalRotation;
-                    PutDown();
-                    return;
+                    currentHoldState = HoldState.putItemBack;
                 }
-                else
+                if (Input.GetButtonDown("Interact"))
                 {
-
-                    if (objectBehindWall)
+                    itemPrompt.text = "";
+                    if (IsItemBehindWall())
                     {
                         return;
                     }
@@ -187,15 +196,38 @@ public class PickUpItem : MonoBehaviour {
                         heldObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
                         heldObject.gameObject.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * throwForce, ForceMode.Impulse);
                         PutDown();
+
                     }
+                }
+                break;
+            case HoldState.delay:
+                if (holdTimer > 0)
+                {
+                    holdTimer -= Time.deltaTime;
 
                 }
-  
-            }
+                else
+                {
+                    holdTimer = holdDelay;
+                    currentHoldState = HoldState.holdingItem; 
+                }
+                break;
+            case HoldState.putItemBack:
+                if (!CanPutItemBack())
+                {
+                    currentHoldState = HoldState.holdingItem;
+                }
+                itemPrompt.text = "Put back " + heldItemData.itemname;
+
+                if (Input.GetButton("Interact"))
+                {
+
+                    heldObject.transform.position = heldItemData.originalLocation;
+                    heldObject.transform.rotation = heldItemData.originalRotation;
+                    PutDown();
+                }
+                break;
         }
-        else
-        {
-            holdTimer -= Time.deltaTime;
-        }
+
     }
 }

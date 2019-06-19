@@ -7,6 +7,8 @@ TagManager:
   - Item
   - Arrow
   - Blocking
+  - Pickup
+  - Interact
   layers:
   - Default
   - TransparentFX
@@ -24,7 +26,7 @@ TagManager:
   - Draggable
   - Player
   - NOCLEAR
-  - 
+  - Item
   - 
   - 
   - 
