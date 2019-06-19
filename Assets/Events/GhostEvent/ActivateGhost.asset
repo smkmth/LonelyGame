@@ -11,5 +11,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9545293975bc6054082356afb5734323, type: 3}
   m_Name: ActivateGhost
   m_EditorClassIdentifier: 
-  eventType: 0
+  eventType: 3
   thisGhostEvent: 0
