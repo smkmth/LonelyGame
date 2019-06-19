@@ -6,7 +6,8 @@ public enum EventType
 {
     Sound,
     Animation,
-    Debug
+    Debug,
+    GhostEvent
 
 }
 

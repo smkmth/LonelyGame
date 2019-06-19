@@ -8,9 +8,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b5e31415b12d6c4cb9c0d7bbc1b87c8, type: 3}
-  m_Name: BookshelfOpen
+  m_Script: {fileID: 11500000, guid: 9545293975bc6054082356afb5734323, type: 3}
+  m_Name: ActivateGhost
   m_EditorClassIdentifier: 
-  eventType: 1
-  animator: {fileID: 0}
-  parameterToTrigger: Open
+  eventType: 0
+  thisGhostEvent: 0

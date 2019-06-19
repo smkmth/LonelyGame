@@ -16,6 +16,8 @@ public class GameEventTrigger : MonoBehaviour {
     public AudioSource audioSource;
     public GameObject animatedObject;
 
+    public Ghost ghost;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
@@ -59,6 +61,15 @@ public class GameEventTrigger : MonoBehaviour {
                     break;
                 case EventType.Debug:
                     Debug.Log("Event Triggered");
+                    break;
+                case EventType.GhostEvent:
+                    GhostEvent ghostEvent = (GhostEvent)eventToTrigger;
+                    switch (ghostEvent.thisGhostEvent)
+                    {
+                        case GhostEventType.ActivateGhost:
+                            ghost.ghostActive = true;
+                            break;
+                    }
                     break;
 
             
