@@ -1,14 +1,21 @@
 fileFormatVersion: 2
-guid: 6558ad814e7108048a221465af1ba09e
+guid: b6999a2fbfcba1a40b81c09defc8cd8d
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
+    100000: Frame_08
+    100002: Picture_08
+    100004: //RootNode
+    400000: Frame_08
+    400002: Picture_08
+    400004: //RootNode
     2100000: lambert1
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Large_Picture_Frame
+    2300000: Frame_08
+    2300002: Picture_08
+    3300000: Frame_08
+    3300002: Picture_08
+    4300000: Frame_08
+    4300002: Picture_08
   externalObjects: {}
   materials:
     importMaterials: 1
