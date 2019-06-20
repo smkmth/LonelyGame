@@ -976,7 +976,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 246982228}
   m_LocalRotation: {x: 0, y: 0.99947596, z: -0, w: -0.0323701}
-  m_LocalPosition: {x: -2.67, y: 0.98, z: 3.23}
+  m_LocalPosition: {x: -44.16, y: 0.98, z: -34.87}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2052022470}
@@ -2055,6 +2055,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   noises:
   - {fileID: 8300000, guid: f905ccaedba03ce4cbc013308cc0f099, type: 3}
+  - {fileID: 8300000, guid: c2f6677eb13e11d47b0475b9ee1b8e44, type: 3}
+  - {fileID: 8300000, guid: 0dc01baebb4497c419391ad73f64dc89, type: 3}
+  - {fileID: 8300000, guid: 2ea7ba6e90f3e7749bdde9fdac67637b, type: 3}
+  - {fileID: 8300000, guid: 0eb4b1430594a6d48876cdc79c8b92d1, type: 3}
+  - {fileID: 8300000, guid: 0eb4b1430594a6d48876cdc79c8b92d1, type: 3}
   sources:
   - {fileID: 2125155218}
   - {fileID: 1555231414}
@@ -2063,8 +2068,8 @@ MonoBehaviour:
   - {fileID: 875741485}
   - {fileID: 62969523}
   - {fileID: 617906641}
-  chanceOfNoise: 100
-  noisesPerSecond: 3
+  chanceOfNoise: 60
+  noisesPerSecond: 10
 --- !u!1 &589515762
 GameObject:
   m_ObjectHideFlags: 0
@@ -2901,7 +2906,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1181622595}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -52.1, y: 0.25, z: -44.3}
+  m_LocalPosition: {x: -52.8, y: 0.25, z: -41.95}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 127132782}
@@ -2928,6 +2933,23 @@ MonoBehaviour:
   ghostActive: 0
   gameoverCanvas: {fileID: 671955138}
   meshRenderer: {fileID: 0}
+  timeBetweenNoises: 0
+  idleNoises: []
+  breathing:
+  - {fileID: 8300000, guid: 62d5a2227d37faa438c3e4a44d4f6c5f, type: 3}
+  - {fileID: 8300000, guid: 3cd3020b48816ed4d8e15a751295b073, type: 3}
+  - {fileID: 8300000, guid: e1d8e54b8484171499f44407327c9996, type: 3}
+  - {fileID: 8300000, guid: 0b51afc93fa84094a98e0572b973267b, type: 3}
+  - {fileID: 8300000, guid: 020f05faff1a47344834be9d7af890a5, type: 3}
+  chanceOfIdleNoise: 0
+  breathingVol: 1
+  timeBetweenBreath: 4
+  spottedNoises:
+  - {fileID: 8300000, guid: 5afe55191cf95f5488b03a2dfa460c0f, type: 3}
+  - {fileID: 8300000, guid: 98d83240c5ef5e1468fd77c9664992d3, type: 3}
+  - {fileID: 8300000, guid: a5df6f2c7565ad9478c22d0d689a01af, type: 3}
+  spottedVol: 1
+  firstSpottedNoise: {fileID: 8300000, guid: 8397ea88d984d96478f26513e4a7d42b, type: 3}
 --- !u!82 &1181622600
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2937,15 +2959,15 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 0eb7f83da2f02fc46a4e1b97acd73c67, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1.5
+  m_Volume: 0.583
+  m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 238
+  Priority: 82
   DopplerLevel: 1
   MinDistance: 0.5
   MaxDistance: 22.51
@@ -3003,8 +3025,8 @@ AudioSource:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.7038372
-      value: 0
+      time: 0.6942852
+      value: 0.009399414
       inSlope: -0.043982424
       outSlope: -0.043982424
       tangentMode: 0
