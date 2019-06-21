@@ -67,7 +67,7 @@ public class GameEventTrigger : MonoBehaviour {
                     switch (ghostEvent.thisGhostEvent)
                     {
                         case GhostEventType.ActivateGhost:
-                            ghost.OnActivateGhost();
+                            ghost.OnFirstActivateGhost();
                             break;
                     }
                     break;

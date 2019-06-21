@@ -24,6 +24,7 @@ public class InGameCamera : MonoBehaviour
     public Canvas canvas;
     public GameObject blackoutPanel;
     public bool isFlashOn;
+    public Ghost ghost;
 
     public void Start()
     {
@@ -107,33 +108,9 @@ public class InGameCamera : MonoBehaviour
 
     IEnumerator TakePhoto()
     {
-        if (isFlashOn)
-        {
-            spotLight.SetActive(true);
-        }
-        energyBar.gameObject.SetActive(false);
-        yield return new WaitForEndOfFrame();
-        Time.timeScale = 0.0f;
-        Texture2D photoTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
-        photoTex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0, false);
-        photoTex.Apply();
-        Sprite photoSprite = Sprite.Create(photoTex, new Rect(0, 0, photoTex.width, photoTex.height), new Vector2(0.5f, 0.5f));
-        photoLibrary.takenPhotoSprites.Add(photoSprite);
-        photoTargetObject.GetComponent<Image>().sprite = photoSprite;
-        poloroidFrame.gameObject.SetActive(true);
-        yield return new WaitForSecondsRealtime(photoDisplayTime);
-        photoTargetObject.GetComponent<Image>().sprite = emptySprite;
-        Time.timeScale = 1.0f;
-        poloroidFrame.gameObject.SetActive(false);
-        energyBar.gameObject.SetActive(true);
-        if (currentGhost != null)
-        {
-            currentGhost.enabled = false;
-            currentGhost = null;
-        }
+        ghost.ToggleGhost(true);
         yield return new WaitForSeconds(flashTime);
-        spotLight.SetActive(false);
-    
+        ghost.ToggleGhost(false);
 
     }
 }

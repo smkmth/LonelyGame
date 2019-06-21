@@ -20,11 +20,8 @@ public class HouseSoundGen : MonoBehaviour {
             houseTimer = noisesPerSecond;
             if (Random.Range(0,100) < chanceOfNoise)
             {
-                int index = Random.Range(0, noises.Length);
-                AudioClip housenoise = noises[index];
                 int sourceindex = Random.Range(0, sources.Length);
-                sources[sourceindex].PlayOneShot(housenoise, Random.Range(0.5f,1f));
-                Debug.Log("played " + sources[sourceindex].gameObject.name);
+                HelperFunctions.PlayRandomNoiseInArray(noises, sources[sourceindex], Random.Range(0.5f, 1f));
             }
         }
         else
