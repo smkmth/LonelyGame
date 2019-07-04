@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+
 public enum HoldState
 {
     notHoldingItem,
@@ -14,7 +14,7 @@ public enum HoldState
 public class PickUpItem : MonoBehaviour {
 
     public SmoothMouseLook smoothMouseLook;
-    public TextMeshProUGUI itemPrompt;
+
 
     public LayerMask wallLayer;
     private Transform heldObject = null;
@@ -39,15 +39,15 @@ public class PickUpItem : MonoBehaviour {
     // Use this for initialization
     void Start () {
         holdTimer = holdDelay;
-        itemPrompt.gameObject.SetActive(true);
-        itemPrompt.text = "";
+      
+        
         currentHoldState = HoldState.notHoldingItem;
     }
 
 
     public void PickUp()
     {
-        itemPrompt.text = "";
+       
         heldObject.GetComponent<Rigidbody>().isKinematic = true;
         distanceToHeldObject = Vector3.Distance(transform.position, heldObject.position);
         heldItemData = heldObject.GetComponent<Item>();
@@ -70,7 +70,6 @@ public class PickUpItem : MonoBehaviour {
         canPutBack = false;
         heldObject = null;
         holdingObject = false;
-        itemPrompt.text = "";
         currentHoldState = HoldState.notHoldingItem;
 
 
@@ -83,12 +82,12 @@ public class PickUpItem : MonoBehaviour {
         Physics.SphereCast(ray, 1.0f, out hit, putBackDistance);
         if (Mathf.Abs(Vector3.Distance(hit.point, heldItemData.originalLocation)) < putBackDistance)
         {
-            itemPrompt.text = "Put back " + heldItemData.itemname;
+           
             return true;
         }
         else
         {
-            itemPrompt.text = "";
+          
             return false;
 
         }
@@ -146,8 +145,7 @@ public class PickUpItem : MonoBehaviour {
         if (Physics.Raycast(ray, out hit, 10000.0f))
         {
             if (hit.collider.tag == "Interact")
-            {
-                itemPrompt.text = "Interact with " + hit.collider.gameObject.name; 
+            { 
                 if (Input.GetButtonDown("Interact"))
                 {
                     hit.collider.gameObject.GetComponent<GameEventTrigger>().TriggerEvent();
@@ -166,7 +164,7 @@ public class PickUpItem : MonoBehaviour {
                 GameObject obj = DetectObject("Pickup");
                 if (obj)
                 {
-                    itemPrompt.text = "Pick up " + obj.GetComponent<Item>().itemname;
+                    
                     if (Input.GetButtonDown("Interact"))
                     {
                         heldObject = obj.transform;
@@ -176,7 +174,6 @@ public class PickUpItem : MonoBehaviour {
                 }
                 else
                 {
-                    itemPrompt.text = "";
                 }
                 break;
             case HoldState.holdingItem:
@@ -186,7 +183,7 @@ public class PickUpItem : MonoBehaviour {
                 }
                 if (Input.GetButtonDown("Interact"))
                 {
-                    itemPrompt.text = "";
+                    
                     if (IsItemBehindWall())
                     {
                         return;
@@ -217,7 +214,7 @@ public class PickUpItem : MonoBehaviour {
                 {
                     currentHoldState = HoldState.holdingItem;
                 }
-                itemPrompt.text = "Put back " + heldItemData.itemname;
+              
 
                 if (Input.GetButton("Interact"))
                 {
